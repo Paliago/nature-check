@@ -1,29 +1,49 @@
 import { Map, Marker, Point } from "pigeon-maps";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import johnny from "./assets/johnny.svg";
+import { Schema } from "../amplify/data/resource";
+import { generateClient } from "aws-amplify/data";
+import Art from "./Art";
 
-const things = [
-  {
-    image: "https://picsum.photos/200",
-    name: "Björk",
-  },
-  {
-    image: "https://picsum.photos/200",
-    name: "Gran",
-  },
-  {
-    image: "https://picsum.photos/200",
-    name: "Ek",
-  },
-];
+const client = generateClient<Schema>();
+
+// @ts-ignore
+const exampleArt: Schema["Art"]["type"] = {
+  artId: String(Math.floor(Math.random() * 1000)),
+  isInvasiveAccordingToEuRegulation: false,
+  isInvasiveInSweden: false,
+  isRedlisted: false,
+  protectedByLaw: false,
+  organismGroup: "Kärlväxter",
+  class: "Magnoliopsida",
+  family: "Lamiaceae",
+  genus: "Ajuga",
+  kingdom: "Plantae",
+  order: "Lamiales",
+  phylum: "Tracheophyta",
+  scientificName: "Ajuga pyramidalis",
+  name: "blåsuga",
+};
 
 export default function MapPage() {
   const [center, setCenter] = useState<Point>([59.213177, 14.521051]);
+  const [marker] = useState<Point>([59.213177, 14.521051]);
   const [zoom, setZoom] = useState(12);
+  const [arts, setArts] = useState<Schema["Art"]["type"][]>([]);
+
+  useEffect(() => {
+    client.models.Art.observeQuery().subscribe({
+      next: (data) => setArts([...data.items]),
+    });
+  }, []);
+
+  function createArt() {
+    client.models.Art.create(exampleArt);
+  }
 
   return (
     <>
-      <h1>Vart är du?</h1>
+      <h1>Var är du?</h1>
       <input type="search" placeholder="Plats" />
 
       <div className="map-container">
@@ -36,25 +56,15 @@ export default function MapPage() {
             setZoom(zoom);
           }}
         >
-          <Marker anchor={center}>
+          <Marker anchor={marker}>
             <img width={20} src={johnny} alt="Johnny" />
           </Marker>
         </Map>
-        <div className="info-box">
-          <p>Information</p>
-          <p>Våtmark</p>
-          <p>Mer info</p>
-          <p>Absolut</p>
-          <p>Vad vill du veta</p>
-        </div>
       </div>
 
       <div className="info-grid">
-        {things.map((thing) => (
-          <div key={thing.name} className="info-card">
-            <img src={thing.image} className="info-image" alt={thing.name} />
-            <p className="info-card-title">{thing.name}</p>
-          </div>
+        {arts.map((art) => (
+          <Art art={art} key={art.artId} />
         ))}
       </div>
     </>

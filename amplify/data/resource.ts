@@ -6,6 +6,26 @@ const schema = a.schema({
       content: a.string(),
     })
     .authorization((allow) => [allow.owner()]),
+
+  Art: a
+    .model({
+      artId: a.id().required(),
+      name: a.string().required(),
+      isInvasiveAccordingToEuRegulation: a.boolean(),
+      isInvasiveInSweden: a.boolean(),
+      isRedlisted: a.boolean(),
+      organismGroup: a.string(),
+      protectedByLaw: a.boolean(),
+      class: a.string(),
+      family: a.string(),
+      genus: a.string(),
+      kingdom: a.string(),
+      order: a.string(),
+      phylum: a.string(),
+      scientificName: a.string(),
+    })
+    .identifier(["artId"])
+    .authorization((allow) => [allow.authenticated()]),
 });
 
 export type Schema = ClientSchema<typeof schema>;

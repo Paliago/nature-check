@@ -36,6 +36,7 @@ button {
 button:hover {
   background-color: #6b8e23;
 }
+
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
@@ -93,12 +94,14 @@ input {
   margin: 0 0 1px 0;
   color: #2f4f4f;
 }
+
 .header-button:hover {
   background-color: transparent;
   border-color: transparent;
   border-bottom: 2px solid #2f4f4f;
   margin: 0;
 }
+
 .header-button:focus,
 .header-button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
@@ -111,8 +114,10 @@ input {
 }
 
 .map-container {
-  display: flex;
   margin-bottom: 20px;
+  border-radius: 15px;
+  overflow: hidden;
+  border: 1px solid transparent;
 }
 
 .info-box {
@@ -157,4 +162,25 @@ input {
   text-align: center;
   box-sizing: border-box;
   color: #000;
+}
+
+.info-card.expanded {
+  position: fixed;
+  top: 10%;
+  left: 10%;
+  right: 10%;
+  bottom: 10%;
+  width: auto;
+  max-width: none;
+  z-index: 1000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background-color: white;
+}
+
+.info-card-content {
+  margin: 1em;
+  line-height: 1.5;
+}
+.info-card-content p {
+  margin: 0.25em 0;
 }
