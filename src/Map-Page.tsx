@@ -37,10 +37,6 @@ export default function MapPage() {
     });
   }, []);
 
-  function createArt() {
-    client.models.Art.create(exampleArt);
-  }
-
   return (
     <>
       <h1>Var är du?</h1>
