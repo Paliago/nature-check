@@ -1,33 +1,14 @@
-import { useEffect, useState } from "react";
-import type { Schema } from "../amplify/data/resource";
-import { generateClient } from "aws-amplify/data";
+import { useState } from "react";
 import { Authenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 import MapPage from "./Map-Page";
 
-const client = generateClient<Schema>();
-
 function App() {
-  const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
-  const [page, setPage] = useState<"map" | "todo">("map");
-
-  function deleteTodo(id: string) {
-    client.models.Todo.delete({ id });
-  }
-
-  useEffect(() => {
-    client.models.Todo.observeQuery().subscribe({
-      next: (data) => setTodos([...data.items]),
-    });
-  }, []);
-
-  function createTodo() {
-    client.models.Todo.create({ content: window.prompt("Todo content") });
-  }
+  const [page, setPage] = useState<"map" | "favorite" | "common">("map");
 
   return (
     <Authenticator>
-      {({ signOut, user }) => (
+      {({ signOut }) => (
         <main>
           <div className="header">
             <button
@@ -37,31 +18,21 @@ function App() {
               Karta
             </button>
             <button
-              className={`header-button ${page === "todo" ? "active" : ""}`}
-              onClick={() => setPage("todo")}
+              className={`header-button ${page === "favorite" ? "active" : ""}`}
+              onClick={() => setPage("favorite")}
             >
-              Todo
+              Favoriter
+            </button>
+            <button
+              className={`header-button ${page === "common" ? "active" : ""}`}
+              onClick={() => setPage("common")}
+            >
+              Vanliga Arter
             </button>
             <button className="header-button" onClick={signOut}>
-              Sign out
+              Logga ut
             </button>
           </div>
-
-          {page === "todo" && (
-            <>
-              <h1>{user?.signInDetails?.loginId}'s todos</h1>
-              <h1>My todos</h1>
-              <button onClick={createTodo}>+ new</button>
-              <ul>
-                {todos.map((todo) => (
-                  <li key={todo.id} onClick={() => deleteTodo(todo.id)}>
-                    {todo.content}
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
-
           {page === "map" && <MapPage />}
         </main>
       )}
